@@ -1,26 +1,21 @@
 import React from 'react'
 import { useState } from 'react'
+import {useSelector,useDispatch} from 'react-redux'
+import {updateFormData, resetFormData, addTech, removeTech} from '../redux/formSlice'
 
 function Form() {
-    const [formData, setFormData] = useState({
-        name: '',
-        role: '',
-        linkedin: '',
-        github: '',
-        experience: '',
-        techStack: []
-      })
-      const [currentTech, setCurrentTech] = useState('')
+    const dispatch = useDispatch();
+    const formData = useSelector(state=>state.form)
+    const [currentTech, setCurrentTech] = useState('')
       
-      const handleChange = (e) =>{
+    const handleChange = (e) =>{
         const {name,value} = e.target
-        setFormData(prev=>({...prev,[name]:value}))
-        console.log(e.target)
-      }
+        dispatch(updateFormData({ name, value }));
+    }
     
       const HandleAddTech = () =>{
         if(currentTech.trim() && !formData.techStack.includes(currentTech.trim())){
-          setFormData(prev=>({...prev,techStack: [...prev.techStack, currentTech.trim()]}))
+          dispatch(addTech(currentTech.trim()))
           setCurrentTech('')
         }
       }
@@ -30,14 +25,7 @@ function Form() {
         if(formData.name && formData.role && formData.github && formData.experience){
           console.log(formData)
           // Reset form
-          setFormData({
-            name: '',
-            role: '',
-            linkedin: '',
-            github: '',
-            experience: '',
-            techStack: []
-          })
+          dispatch(resetFormData())
         }
       }
   return (
@@ -85,7 +73,7 @@ function Form() {
           {formData.techStack.map((stack,index)=>(
               <span key={index} className="bg-[#ddd9d9] text-[#035003] px-2 py-1 rounded-full">
                 {stack}
-                <button type="button" onClick={()=>setFormData(prev=>({...prev,techStack: prev.techStack.filter((_,i)=>i!==index)}))} className="text-red-500 ml-2">x</button>
+                <button type="button" onClick={()=>dispatch(removeTech(index))} className="text-red-500 ml-2">x</button>
               </span>
             ))
           }
