@@ -1,7 +1,18 @@
 import Header from "./component/Header"
 import Form from "./component/Form"
+import { useState, useEffect } from "react"
 function App() {
-  
+  const [candidates, setCandidates] = useState([])
+  useEffect(()=>{
+    const savedChange = localStorage.getItem('candidates')
+    if(savedChange){
+      setCandidates(JSON.parse(savedChange))
+    }
+  },[])
+  // Save to localStorage when candidates change
+  useEffect(() => { 
+    localStorage.setItem('candidates',JSON.stringify(candidates))
+  }, [candidates]); 
 
   return (
     <>
@@ -48,8 +59,8 @@ function App() {
              </article>
               
               {/* Candidates table*/}
-             <article> 
-             
+             <article className="overflow-x-auto"> 
+              
             </article>
         </section>
       </main>
