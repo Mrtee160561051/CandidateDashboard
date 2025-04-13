@@ -35,27 +35,27 @@ function Form() {
       
       <div className="flex flex-col gap-1">
         <label htmlFor="candidate-name" className="font-medium">Full Name</label>
-        <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Candidate Name" required className="border p-2 rounded"/>
+        <input type="text" name="name" value={formData.name} onChange={handleChange} required className="border p-2 rounded border-neutral-200"/>
       </div>
       
       <div className="flex flex-col gap-1">
         <label htmlFor="Job-Role" className="font-medium">Job Role</label>
-        <input type="text" name="role" value={formData.role} onChange={handleChange} placeholder="Frontend Developer" required className="border p-2 rounded"/>
+        <input type="text" name="role" value={formData.role} onChange={handleChange} placeholder="Frontend Developer" required className="border p-2 rounded border-neutral-200"/>
       </div>
       
       <div className="flex flex-col gap-1">
         <label htmlFor="LinkedIn" className="font-medium">LinkedIn</label>
-        <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="LinkedIn URL" className="border p-2 rounded"/>
+        <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="LinkedIn URL" className="border p-2 rounded border-neutral-200"/>
       </div>
       
       <div className="flex flex-col gap-1">
         <label htmlFor="GitHub" className="font-medium">GitHub</label>
-        <input type="url" name="github" required value={formData.github} onChange={handleChange} placeholder="GitHub URL" className="border p-2 rounded"/>
+        <input type="url" name="github" required value={formData.github} onChange={handleChange} placeholder="GitHub URL" className="border p-2 rounded border-neutral-200"/>
       </div>
       
       <div className="flex flex-col gap-1">
         <label htmlFor="Experience" className="font-medium">Experience Level</label>
-        <select name="experience" value={formData.experience} onChange={handleChange} className="border p-2 rounded bg-[#ddd9d9]" required> 
+        <select name="experience" value={formData.experience} onChange={handleChange} className="border p-2 rounded bg-[#ddd9d9] border-neutral-200" required> 
           <option value="">Select Experience Level</option>
           <option value="junior">Junior</option>
           <option value="mid">Mid</option>
@@ -66,7 +66,7 @@ function Form() {
       <div className="flex flex-col gap-1"> 
         <label htmlFor="TechStack" className="font-medium">Tech Stack</label>
         <div className="grid grid-cols-5 md:grid-cols-7 gap-2">
-           <input type="text" value={currentTech} onChange={(e)=>setCurrentTech(e.target.value)} placeholder="React, Node.js, etc." className="border col-span-4 md:col-span-6 lg:col-span-5 p-2 rounded"/>
+           <input type="text" value={currentTech} onChange={(e)=>setCurrentTech(e.target.value)} placeholder="React, Node.js, etc." className="border col-span-4 md:col-span-6 lg:col-span-5 p-2 rounded border-neutral-200"/>
            <button type="button" onClick={HandleAddTech} className=" bg-blue-500 text-white px-2 p-2 md:col-span-1 lg:col-span-2 rounded">Add </button>
         </div>
         <div className="flex flex-wrap gap-2">
