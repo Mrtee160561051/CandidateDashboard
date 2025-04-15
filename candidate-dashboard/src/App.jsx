@@ -1,126 +1,94 @@
-import Header from "./component/Header"
-import Form from "./component/Form"
-import { useState, useEffect } from "react"
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/solid'
-function App() {
-  const [candidates, setCandidates] = useState([])
-  const [sortConfig, setSortConfig] = useState({
-    key: 'name',
-    direction: 'ascending'
-  })
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  addCandidate,
+  updateCandidate,
+  deleteCandidate,
+  setFilters,
+  setSortConfig,
+  loadCandidates,
+} from './redux/candidateSlice';
+import CandidateDashboard from './component/CandidateDashboard';
+import Header from './component/Header';
+import Form from './component/Form';
+import Modal from './component/Modal';
 
-  
-  // Load from localStorage on initial render
-  useEffect(()=>{
-    const savedChange = localStorage.getItem('candidates')
-    if(savedChange){
-      setCandidates(JSON.parse(savedChange))
+function App() {
+  const dispatch = useDispatch();
+  const { candidates, filters, sortConfig } = useSelector((state) => state.candidates);
+  const [selectedCandidate, setSelectedCandidate] = React.useState(null);
+  const [showModal, setShowModal] = React.useState(false);
+
+  // Load candidates from localStorage on initial render
+  useEffect(() => {
+    const savedCandidates = localStorage.getItem('candidates');
+    if (savedCandidates) {
+      dispatch(loadCandidates(JSON.parse(savedCandidates)));
     }
-  },[])
-  // Save to localStorage when candidates change
-  useEffect(() => { 
-    localStorage.setItem('candidates',JSON.stringify(candidates))
-  }, [candidates]); 
-  
-  //Determine the sorting order
-  const handleSort = (key) => { 
-    let direction = 'ascending'
+  }, [dispatch]);
+
+  // Save candidates to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('candidates', JSON.stringify(candidates));
+  }, [candidates]);
+
+  const handleSort = (key) => {
+    let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending'
-    }     
-    setSortConfig({ key, direction })
-  }
-  
-  //Determine where the icon should be placed or not
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return null
-    return sortConfig.direction === 'ascending' ? (
-      <ArrowUpIcon className="h-4 w-4 inline ml-1" />
-    ) : (
-      <ArrowDownIcon className="h-4 w-4 inline ml-1" />
-    )
-  }
+      direction = 'descending';
+    }
+    dispatch(setSortConfig({ key, direction }));
+  };
+
+  const sortedCandidates = [...candidates].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'ascending' ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'ascending' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const filteredCandidates = sortedCandidates.filter((candidate) => {
+    return (
+      (filters.role === '' || candidate.role.toLowerCase().includes(filters.role.toLowerCase())) &&
+      (filters.experience === '' || candidate.experience === filters.experience) &&
+      (filters.techStack === '' ||
+        candidate.techStack.some((tech) =>
+          tech.toLowerCase().includes(filters.techStack.toLowerCase())
+        ))
+    );
+  });
+
   return (
     <>
-      <Header/>
+      <Header />
       <main className="grid grid-cols-1 lg:grid-cols-7 gap-4 p-4 text-sm">
-        <Form/>
+        <Form addCandidate={(candidate) => dispatch(addCandidate(candidate))} />
         <section className="lg:col-span-5 bg-white p-4 rounded shadow-2xl">
-             <article>
-                {/* Score */}
-                <div className="flex flex-row justify-between gap-2 items-center border-b-2 pb-2">
-                  <h2 className="font-medium text-lg ">Candidate Dashboard</h2>
-                  <p className="text-nowrap">Total Candidates: {candidates.length}</p>
-                </div>
-
-                {/* Filters */}
-                <div className="flex flex-row justify-between flex-wrap md:flex-nowrap gap-2 items-center pb-2 pt-2">
-                  <div>
-                    <label htmlFor="name" className="font-medium">Filter by Name:</label>
-                    <input type="text" name="name" placeholder="e.g John Doe" className="border p-2 rounded w-full border-neutral-200"/>
-                  </div>
-                  <div>
-                    <label htmlFor="filter" className="font-medium">Filter by Role:</label>
-                    <input type="text" name="filter" placeholder="e.g Backend" className="border p-2 rounded w-full border-neutral-200"/>
-                  </div>
-                  <div>
-                    <label htmlFor="experience" className="font-medium">Filter by Experience:</label>
-                    <select name="experience" className="border p-2 rounded w-full bg-[#ddd9d9] border-neutral-200">
-                      <option value="">Select Experience Level</option>
-                      <option value="junior">Junior</option>
-                      <option value="mid">Mid</option>
-                      <option value="senior">Senior</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="tech" className="font-medium">Filter by Tech:</label>
-                    <input type="text" name="tech" placeholder="e.g React" className="border p-2 rounded w-full border-neutral-200"/>
-                  </div>
-                </div>
-             </article>
-              
-              {/* Summary */}
-             <article className="flex flex-col gap-2">
-
-             </article>
-              
-              {/* Candidates table*/}
-             <article className="overflow-x-auto"> 
-              <table className="min-w-full divide-y divide-neutral-200">
-                 <thead className="bg-neutral-100">
-                    <tr>
-                      <th
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('name')}
-                      >
-                        Name {getSortIcon('name')}
-                      </th>
-                      <th
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('role')}
-                      >
-                        Role {getSortIcon('role')}
-                      </th>
-                      <th
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('experience')}
-                      >
-                        Experience {getSortIcon('experience')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tech Stack
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Links
-                      </th>
-                    </tr>
-                 </thead>
-              </table>
-            </article>
+          <CandidateDashboard
+            candidates={filteredCandidates}
+            onSort={handleSort}
+            sortConfig={sortConfig}
+            onFilter={(filters) => dispatch(setFilters(filters))}
+            onSelectCandidate={(candidate) => {
+              setSelectedCandidate(candidate);
+              setShowModal(true);
+            }}
+          />
         </section>
+        {showModal && selectedCandidate && (
+          <Modal
+            candidate={selectedCandidate}
+            onClose={() => setShowModal(false)}
+            onUpdate={(updatedCandidate) => dispatch(updateCandidate(updatedCandidate))}
+            onDelete={(id) => dispatch(deleteCandidate(id))}
+          />
+        )}
       </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

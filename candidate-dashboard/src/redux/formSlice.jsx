@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+    formData:{
     name: '',
     role: '',
     linkedin: '',
     github: '',
     experience: '',
     techStack: [],
-};
+},
+currentTech:''};
 
 const formSlice = createSlice({
     name: 'form',
@@ -15,17 +17,20 @@ const formSlice = createSlice({
     reducers: {
         updateFormData: (state, action) => {
             const { name, value } = action.payload;
-            state[name] = value;
+            state.formData[name] = value;
         },
         resetFormData: () => initialState,
         addTech: (state, action) => {
-            state.techStack.push(action.payload);
+            state.formData.techStack.push(action.payload);
         },
         removeTech: (state, action) => {
-            state.techStack.splice(action.payload, 1);
+            state.formData.techStack.splice(action.payload, 1);
         },
+        UpdateCurrentTech: (state,action)=>{
+            state.currentTech = action.payload
+        }
     },
 });
 
-export const { updateFormData, resetFormData, addTech, removeTech } = formSlice.actions;
+export const { updateFormData, resetFormData, addTech, removeTech, UpdateCurrentTech } = formSlice.actions;
 export default formSlice.reducer;

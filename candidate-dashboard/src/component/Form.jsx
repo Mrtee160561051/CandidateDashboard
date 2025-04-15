@@ -1,37 +1,39 @@
 import React from 'react'
-import { useState } from 'react'
 import {useSelector,useDispatch} from 'react-redux'
-import {updateFormData, resetFormData, addTech, removeTech} from '../redux/formSlice'
+import {updateFormData, resetFormData, addTech, removeTech,UpdateCurrentTech} from '../redux/formSlice'
 
-function Form() {
+function Form({addCandidate}) {
     const dispatch = useDispatch();
-    const formData = useSelector(state=>state.form)
-    const [currentTech, setCurrentTech] = useState('')
+    const formData = useSelector(state=>state.form.formData)
+    const currentTech = useSelector(state=>state.form.currentTech)
+    
       
     const handleChange = (e) =>{
-        const {name,value} = e.target
-        dispatch(updateFormData({ name, value }));
+        dispatch(updateFormData(e.target));
     }
     
-      const HandleAddTech = () =>{
+    const HandleAddTech = () =>{
         if(currentTech.trim() && !formData.techStack.includes(currentTech.trim())){
-          dispatch(addTech(currentTech.trim()))
-          setCurrentTech('')
+            dispatch(addTech(currentTech.trim()))
+            dispatch(UpdateCurrentTech(''))
         }
-      }
+    }
     
-      const HandleSubmit = (e) =>{
-        e.preventDefault()
+    const handleSubmit = (e) =>{
+        e.preventDefault();
         if(formData.name && formData.role && formData.github && formData.experience){
-          console.log(formData)
-          // Reset form
-          dispatch(resetFormData())
+            // Call addCandidate with the current form data
+            addCandidate(formData);
+            // Reset form
+            dispatch(resetFormData());
         }
-      }
+    }
+
+
   return (
     <section className="lg:col-span-2 bg-white p-4 rounded shadow-2xl">
     <h2 className="font-bold text-lg pb-3">ADD NEW CANDIDATE</h2>  
-    <form className="flex flex-col gap-2">
+    <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
       
       <div className="flex flex-col gap-1">
         <label htmlFor="candidate-name" className="font-medium">Full Name</label>
@@ -66,7 +68,7 @@ function Form() {
       <div className="flex flex-col gap-1"> 
         <label htmlFor="TechStack" className="font-medium">Tech Stack</label>
         <div className="grid grid-cols-5 md:grid-cols-7 gap-2">
-           <input type="text" value={currentTech} onChange={(e)=>setCurrentTech(e.target.value)} placeholder="React, Node.js, etc." className="border col-span-4 md:col-span-6 lg:col-span-5 p-2 rounded border-neutral-200"/>
+           <input type="text" value={currentTech} onChange={(e)=>dispatch(UpdateCurrentTech(e.target.value))} placeholder="React, Node.js, etc." className="border col-span-4 md:col-span-6 lg:col-span-5 p-2 rounded border-neutral-200"/>
            <button type="button" onClick={HandleAddTech} className=" bg-blue-500 text-white px-2 p-2 md:col-span-1 lg:col-span-2 rounded">Add </button>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -79,7 +81,7 @@ function Form() {
           }
         </div>
       </div>
-      <button type="submit" onSubmit={HandleSubmit} className="bg-[#035003] text-white px-4 py-2 rounded">Add Candidate</button>
+      <button type="submit" className="bg-[#035003] text-white px-4 py-2 rounded">Add Candidate</button>
     </form> 
 </section>
   )
