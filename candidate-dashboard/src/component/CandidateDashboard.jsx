@@ -1,15 +1,10 @@
 // src/components/CandidateDashboard.jsx
-import {useState} from 'react'
+import { useSelector } from 'react-redux'
 import { LinkIcon, CodeBracketIcon } from '@heroicons/react/24/outline'
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/solid'
 
 const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelectCandidate }) => {
-  const [filterValues, setFilterValues] = useState({
-    name:'',
-    role: '',
-    experience: '',
-    techStack: ''
-  })
+  const {filters} = useSelector((state) => state.candidates);
 
   const experienceCounts = candidates.reduce((acc, candidate) => {
     acc[candidate.experience] = (acc[candidate.experience] || 0) + 1
@@ -18,8 +13,7 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target
-    const newFilters = { ...filterValues, [name]: value }
-    setFilterValues(newFilters)
+    const newFilters = { ...filters, [name]: value }
     onFilter(newFilters)
   }
 
@@ -40,16 +34,16 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
         <div>
           <label className="block text-sm font-medium mb-1">Filter by Name</label>
           <input
             type="text"
             name="name"
-            value={filterValues.name}
+            value={filters.name}
             onChange={handleFilterChange}
             placeholder="e.g. Frontend"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded border-neutral-200"
           />
         </div>
         <div>
@@ -57,19 +51,19 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
           <input
             type="text"
             name="role"
-            value={filterValues.role}
+            value={filters.role}
             onChange={handleFilterChange}
             placeholder="e.g. Frontend"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded border-neutral-200"
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Filter by Experience</label>
           <select
             name="experience"
-            value={filterValues.experience}
+            value={filters.experience}
             onChange={handleFilterChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-[#ddd9d9] border-neutral-200"
           >
             <option value="">All Levels</option>
             <option value="Junior">Junior</option>
@@ -82,10 +76,10 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
           <input
             type="text"
             name="techStack"
-            value={filterValues.techStack}
+            value={filters.techStack}
             onChange={handleFilterChange}
             placeholder="e.g. React"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded border-neutral-200"
           />
         </div>
       </div>

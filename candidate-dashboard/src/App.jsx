@@ -62,11 +62,11 @@ function App() {
       ))
     );
   });
-  
+  console.log(filteredCandidates)
 
   return (
     <>
-      <Header />
+      <Header candidates={filteredCandidates}/>
       <main className="grid grid-cols-1 lg:grid-cols-7 gap-4 p-4 text-sm">
         <Form addCandidate={(candidate) => dispatch(addCandidate(candidate))} />
         <section className="lg:col-span-5 bg-white p-4 rounded shadow-2xl">
