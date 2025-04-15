@@ -7,7 +7,6 @@ import {
   updateEditData,
   updateTechStack,
 } from '../redux/modalSlice';
-
 import {
   updateCandidate,
   deleteCandidate
@@ -16,8 +15,6 @@ import {
 const Modal = () => {
   const dispatch = useDispatch();
   const { isOpen, candidate, isEditing, editData } = useSelector(state => state.modal);
-
-  if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +28,15 @@ const Modal = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updateCandidate(editData));
+    dispatch(closeModal());
   };
+
+  const handleDelete = () => {
+    dispatch(deleteCandidate(candidate.id));
+    dispatch(closeModal());
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -40,7 +45,11 @@ const Modal = () => {
           <h3 className="text-xl font-semibold">
             {isEditing ? 'Edit Candidate' : 'Candidate Details'}
           </h3>
-          <button onClick={() => dispatch(closeModal())} className="text-gray-500 hover:text-gray-700">
+          <button 
+            onClick={() => dispatch(closeModal())} 
+            className="text-gray-500 hover:text-gray-700"
+            aria-label="Close modal"
+          >
             &times;
           </button>
         </div>
@@ -78,6 +87,7 @@ const Modal = () => {
                   value={editData.linkedin}
                   onChange={handleChange}
                   className="w-full p-2 border rounded"
+                  pattern="https?://.+"
                 />
               </div>
               <div>
@@ -88,6 +98,7 @@ const Modal = () => {
                   value={editData.github}
                   onChange={handleChange}
                   className="w-full p-2 border rounded"
+                  pattern="https?://.+"
                 />
               </div>
               <div>
@@ -99,6 +110,7 @@ const Modal = () => {
                   className="w-full p-2 border rounded"
                   required
                 >
+                  <option value="">Select Experience</option>
                   <option value="Junior">Junior</option>
                   <option value="Mid">Mid</option>
                   <option value="Senior">Senior</option>
@@ -111,6 +123,7 @@ const Modal = () => {
                   value={editData.techStack.join(', ')}
                   onChange={handleTechChange}
                   className="w-full p-2 border rounded"
+                  placeholder="React, JavaScript, CSS"
                 />
               </div>
             </div>
@@ -118,7 +131,7 @@ const Modal = () => {
               <button
                 type="button"
                 onClick={() => dispatch(cancelEditing())}
-                className="px-4 py-2 border rounded"
+                className="px-4 py-2 border rounded hover:bg-gray-100"
               >
                 Cancel
               </button>
@@ -181,8 +194,8 @@ const Modal = () => {
               <div className="md:col-span-2">
                 <p className="text-sm text-gray-500">Tech Stack</p>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {candidate.techStack.map(tech => (
-                    <span key={tech} className="bg-gray-200 px-2 py-1 rounded text-xs">
+                  {candidate.techStack.map((tech, index) => (
+                    <span key={`${tech}-${index}`} className="bg-gray-200 px-2 py-1 rounded text-xs">
                       {tech}
                     </span>
                   ))}
@@ -191,7 +204,7 @@ const Modal = () => {
             </div>
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => dispatch(deleteCandidate(candidate.id))}
+                onClick={handleDelete}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
                 Delete
@@ -207,7 +220,7 @@ const Modal = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Modal
+export default Modal;

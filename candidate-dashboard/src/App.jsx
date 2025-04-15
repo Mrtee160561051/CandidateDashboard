@@ -50,16 +50,19 @@ function App() {
     return 0;
   });
 
-  const filteredCandidates = sortedCandidates.filter((candidate) => {
+  const filteredCandidates = sortedCandidates.filter(candidate => {
+    const { name, role, experience, techStack } = filters;
+    
     return (
-      (filters.role === '' || candidate.role.toLowerCase().includes(filters.role.toLowerCase())) &&
-      (filters.experience === '' || candidate.experience === filters.experience) &&
-      (filters.techStack === '' ||
-        candidate.techStack.some((tech) =>
-          tech.toLowerCase().includes(filters.techStack.toLowerCase())
-        ))
+      (!name || candidate.name.toLowerCase().includes(name.toLowerCase())) &&
+      (!role || candidate.role.toLowerCase().includes(role.toLowerCase())) &&
+      (!experience || candidate.experience.toLowerCase() === experience.toLowerCase()) &&
+      (!techStack || candidate.techStack.some(tech => 
+        tech.toLowerCase().includes(techStack.toLowerCase())
+      ))
     );
   });
+  
 
   return (
     <>

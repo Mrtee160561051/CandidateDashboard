@@ -5,6 +5,7 @@ import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/solid'
 
 const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelectCandidate }) => {
   const [filterValues, setFilterValues] = useState({
+    name:'',
     role: '',
     experience: '',
     techStack: ''
@@ -34,8 +35,8 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex flex-row justify-between gap-2 items-center border-b-2 pb-2">
-                  <h2 className="font-medium text-lg ">Candidate Dashboard</h2>
-                  <p className="text-nowrap">Total Candidates: {candidates.length}</p>
+          <h2 className="font-medium text-lg ">Candidate Dashboard</h2>
+          <p className="text-nowrap">Total Candidates: {candidates.length}</p>
       </div>
 
       {/* Filters */}
@@ -45,7 +46,7 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
           <input
             type="text"
             name="name"
-            value={filterValues.role}
+            value={filterValues.name}
             onChange={handleFilterChange}
             placeholder="e.g. Frontend"
             className="w-full p-2 border rounded"

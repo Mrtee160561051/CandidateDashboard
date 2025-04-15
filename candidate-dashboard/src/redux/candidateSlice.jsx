@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
+const storedCandidates = JSON.parse(localStorage.getItem('candidates')) || [];
 const initialState = {
-  candidates: [],
+  candidates: [...storedCandidates],
   filters: {
+    name:'',
     role: '',
     experience: '',
     techStack: '',
@@ -19,7 +21,7 @@ const candidateSlice = createSlice({
   initialState,
   reducers: {
     addCandidate: (state, action) => {
-      const newCandidate = { ...action.payload, id: uuidv4() };
+      const newCandidate = { ...action.payload, id: uuid() };
       state.candidates.push(newCandidate);
     },
     updateCandidate: (state, action) => {
