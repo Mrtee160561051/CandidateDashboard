@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isOpen: false,
-  candidate: null,
+  selectedCandidate: null,
   isEditing: false,
   editData: null
 };
@@ -14,7 +14,7 @@ const modalSlice = createSlice({
   reducers: {
     openModal: (state, action) => {
       state.isOpen = true;
-      state.candidate = action.payload;
+      state.selectedCandidate = action.payload;
       state.isEditing = false;
       state.editData = { ...action.payload };
     },
@@ -26,7 +26,7 @@ const modalSlice = createSlice({
     },
     cancelEditing: (state) => {
       state.isEditing = false;
-      state.editData = { ...state.candidate };
+      state.editData = { ...state.selectedCandidate };
     },
     updateEditData: (state, action) => {
       const { name, value } = action.payload;

@@ -8,16 +8,19 @@ import {
   setSortConfig,
   loadCandidates,
 } from './redux/candidateSlice';
+import {openModal,
+  closeModal,
+} from './redux/modalSlice'
 import CandidateDashboard from './component/CandidateDashboard';
 import Header from './component/Header';
 import Form from './component/Form';
 import Modal from './component/Modal';
 
+
 function App() {
   const dispatch = useDispatch();
   const { candidates, filters, sortConfig } = useSelector((state) => state.candidates);
-  const [selectedCandidate, setSelectedCandidate] = React.useState(null);
-  const [showModal, setShowModal] = React.useState(false);
+  const {isOpen,selectedCandidate} = useSelector(state=>state.modal)
 
   // Load candidates from localStorage on initial render
   useEffect(() => {
@@ -76,16 +79,15 @@ function App() {
             sortConfig={sortConfig}
             onFilter={(filters) => dispatch(setFilters(filters))}
             onSelectCandidate={(candidate) => {
-              setSelectedCandidate(candidate);
-              setShowModal(true);
+              dispatch(openModal(candidate));
             }}
           />
         </section>
-        {showModal && selectedCandidate && (
+        {isOpen && selectedCandidate && (
           <Modal
             candidate={selectedCandidate}
-            onClose={() => setShowModal(false)}
-            onUpdate={(updatedCandidate) => dispatch(updateCandidate(updatedCandidate))}
+            onClose={() => dispatch(closeModal())}
+            onUpdate={(updatedCandidate) => {dispatch(updateCandidate(updatedCandidate)); dispatch(closeModal());}}
             onDelete={(id) => dispatch(deleteCandidate(id))}
           />
         )}
