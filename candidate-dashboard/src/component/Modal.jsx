@@ -13,7 +13,8 @@ const Modal = ({ candidate, onClose, onUpdate, onDelete }) => {
   const {isEditing,editData} = useSelector(state=>state.modal)
 
   const handleChange = (e) => {
-    dispatch(updateEditData(e.target)) 
+    const { name, value } = e.target;
+    dispatch(updateEditData({ name, value })) 
   }
 
   const handleTechChange = (e) => {

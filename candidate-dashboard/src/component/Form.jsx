@@ -9,7 +9,8 @@ function Form({addCandidate}) {
     
       
     const handleChange = (e) =>{
-        dispatch(updateFormData(e.target));
+        const {name,value} = e.target;
+        dispatch(updateFormData({name,value}))
     }
     
     const HandleAddTech = () =>{
