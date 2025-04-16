@@ -6,7 +6,7 @@ function Form({addCandidate}) {
     const dispatch = useDispatch();
     const formData = useSelector(state=>state.form.formData)
     const currentTech = useSelector(state=>state.form.currentTech)
-    
+    const { candidates } = useSelector((state) => state.candidates);
       
     const handleChange = (e) =>{
         const {name,value} = e.target;
@@ -22,11 +22,14 @@ function Form({addCandidate}) {
     
     const handleSubmit = (e) =>{
         e.preventDefault();
-        if(formData.name && formData.role && formData.github && formData.experience){
+        if(formData.name && formData.role && formData.github && formData.experience && !candidates.some(candidate => candidate.name === formData.name || candidate.github === formData.github)){
             // Call addCandidate with the current form data
             addCandidate(formData);
             // Reset form
             dispatch(resetFormData());
+        }
+        if(candidates.some(candidate => candidate.name === formData.name || candidate.github === formData.github)){
+            alert('Candidate with this Name or GitHub already exists');
         }
     }
 
