@@ -14,6 +14,7 @@ const initialState = {
     key: 'name',
     direction: 'ascending',
   },
+  currentPage: 1
 };
 
 const candidateSlice = createSlice({
@@ -44,6 +45,12 @@ const candidateSlice = createSlice({
     loadCandidates: (state, action) => {
       state.candidates = action.payload;
     },
+    resetCurrentPage:(state) => {
+      state.currentPage = 1;
+    },
+    updateCurrentPage:(state, action)=>{
+      state.currentPage = action.payload
+    }
   },
 });
 
@@ -54,6 +61,8 @@ export const {
   setFilters,
   setSortConfig,
   loadCandidates,
+  resetCurrentPage,
+  updateCurrentPage
 } = candidateSlice.actions;
 
 export default candidateSlice.reducer;

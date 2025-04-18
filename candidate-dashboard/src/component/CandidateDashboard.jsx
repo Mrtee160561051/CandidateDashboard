@@ -1,10 +1,20 @@
-// src/components/CandidateDashboard.jsx
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch} from 'react-redux'
 import { LinkIcon, CodeBracketIcon } from '@heroicons/react/24/outline'
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/solid'
+import {resetCurrentPage,
+  updateCurrentPage
+} from '../redux/candidateSlice'
 
 const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelectCandidate }) => {
-  const {filters} = useSelector((state) => state.candidates);
+  const { filters, currentPage } = useSelector((state) => state.candidates)
+  const dispatch = useDispatch()
+  // Pagination state
+  const candidatesPerPage = 9
+  const totalPages = Math.ceil(candidates.length / candidatesPerPage)
+
+  const indexOfLastCandidate = currentPage * candidatesPerPage
+  const indexOfFirstCandidate = indexOfLastCandidate - candidatesPerPage
+  const currentCandidates = candidates.slice(indexOfFirstCandidate, indexOfLastCandidate)
 
   const experienceCounts = candidates.reduce((acc, candidate) => {
     acc[candidate.experience] = (acc[candidate.experience] || 0) + 1
@@ -15,6 +25,7 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
     const { name, value } = e.target
     const newFilters = { ...filters, [name]: value }
     onFilter(newFilters)
+    dispatch(resetCurrentPage()) // Reset to first page on filter
   }
 
   const getSortIcon = (key) => {
@@ -24,6 +35,12 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
     ) : (
       <ArrowDownIcon className="h-4 w-4 inline ml-1" />
     )
+  }
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      dispatch(updateCurrentPage(newPage))
+    }
   }
 
   return (
@@ -125,14 +142,14 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {candidates.length === 0 ? (
+            {currentCandidates.length === 0 ? (
               <tr>
                 <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
                   No candidates found
                 </td>
               </tr>
             ) : (
-              candidates.map(candidate => (
+              currentCandidates.map(candidate => (
                 <tr 
                   key={candidate.id} 
                   className="hover:bg-gray-50 cursor-pointer"
@@ -194,6 +211,35 @@ const CandidateDashboard = ({ candidates, onSort, sortConfig, onFilter, onSelect
           </tbody>
         </table>
       </div>
+
+     {/* Pagination Controls */}
+     {totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2 text-sm">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-3 py-1 border rounded ${currentPage === index + 1 ? 'bg-gray-200 font-semibold' : ''}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   )
 }

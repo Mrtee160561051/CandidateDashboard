@@ -63,9 +63,9 @@ function Form({addCandidate}) {
         <label htmlFor="Experience" className="font-medium">Experience Level</label>
         <select name="experience" value={formData.experience} onChange={handleChange} className="border p-2 rounded bg-[#ddd9d9] border-neutral-200" required> 
           <option value="">Select Experience Level</option>
-          <option value="junior">Junior</option>
-          <option value="mid">Mid</option>
-          <option value="senior">Senior</option>
+          <option value="Junior">Junior</option>
+          <option value="Mid">Mid</option>
+          <option value="Senior">Senior</option>
         </select> 
       </div>
       
